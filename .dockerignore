@@ -13,7 +13,7 @@
 **/.venv
 **/.vscode
 *.env*
-!/.env
+# Runtime secrets must not be copied into the backend image.
 # Generated local deployment credentials
 **/.skyvern
 **/secrets*.toml
@@ -30,3 +30,6 @@ skyvern-frontend/node_modules
 .dockerignore
 .gitignore
 Dockerfile
+
+**/postgres-data
+**/log

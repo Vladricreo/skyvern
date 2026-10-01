@@ -13,6 +13,12 @@ type BannerStatus =
 
 function getCopy(status: BannerStatus): { title: string; description: string } {
   switch (status) {
+    case "remote_unavailable":
+      return {
+        title: "Local diagnostics unavailable remotely",
+        description:
+          "API requests are authenticated normally. Local diagnostics are only available on the backend host.",
+      };
     case "missing_api_key":
       return {
         title: "UI credential missing",
@@ -73,13 +79,15 @@ function SelfHealApiKeyBanner() {
   // the generic unauthorized banner.
   const bannerStatus: BannerStatus | null = error
     ? "error"
-    : rawStatus && rawStatus !== "ok"
+    : rawStatus && rawStatus !== "ok" && rawStatus !== "remote_unavailable"
       ? rawStatus
       : uiSessionFailure
         ? "ui_session_failed"
         : authIssue
           ? "request_auth_error"
-          : null;
+          : rawStatus === "remote_unavailable"
+            ? "remote_unavailable"
+            : null;
 
   if (!bannerStatus) {
     return null;
@@ -90,6 +98,7 @@ function SelfHealApiKeyBanner() {
   // The diagnostics endpoint only exists in a local backend, so its statuses are the only
   // ones where local-development advice is the right next step.
   const isLocalDiagnosticsStatus =
+    bannerStatus !== "remote_unavailable" &&
     bannerStatus !== "error" &&
     bannerStatus !== "ui_session_failed" &&
     bannerStatus !== "request_auth_error";

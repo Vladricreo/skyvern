@@ -6,7 +6,7 @@ services:
     # ports:
     #   - 5432:5432
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - /var/lib/skyvern-postgres:/var/lib/postgresql/data
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_USER=skyvern
@@ -18,12 +18,9 @@ services:
       timeout: 5s
       retries: 5
   skyvern:
-    image: public.ecr.aws/skyvern/skyvern:latest
-    # For local backend development, replace the image line above with:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    # Or keep the public image and uncomment the source mounts below.
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: on-failure
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -31,7 +28,7 @@ services:
       - .env
     # comment out if you want to externally call skyvern API
     ports:
-      - 8000:8000
+      - "18000:8000"
       - 6080:6080 # for VNC WebSocket streaming
     volumes:
       - ./artifacts:/data/artifacts
@@ -47,18 +44,18 @@ services:
       # - ./skyvern:/app/skyvern
       # - ./alembic:/app/alembic
     environment:
-      # ─────────────────────────────────────────────────────────────────
+      # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       # Compose-network values live here. These are infrastructure values
       # tied to the docker compose network (e.g. the `postgres` hostname
       # only resolves inside this compose stack). DO NOT move these into
-      # .env — `.env.example` uses a `localhost` host that points at the
+      # .env â€” `.env.example` uses a `localhost` host that points at the
       # backend container itself inside compose, which would break the DB
       # connection.
       #
       # User secrets (LLM API keys, etc.) go in `.env` (loaded above via
       # env_file). The split is intentional: compose owns infrastructure;
       # .env owns secrets.
-      # ─────────────────────────────────────────────────────────────────
+      # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       - DATABASE_STRING=postgresql+psycopg://skyvern:skyvern@postgres:5432/skyvern
       - BROWSER_STREAMING_MODE=${BROWSER_STREAMING_MODE:-cdp}
       - BROWSER_TYPE=${BROWSER_TYPE:-chromium-headful}
@@ -71,6 +68,8 @@ services:
       - ENABLE_LOCAL_CREDENTIAL_VAULT=${ENABLE_LOCAL_CREDENTIAL_VAULT:-true}
       - LOCAL_CREDENTIAL_VAULT_PATH=/data/credential_vault
       - ENABLE_CODE_BLOCK=true
+      - ENABLE_OPENAI=${ENABLE_OPENAI:-true}
+      - LLM_KEY=${LLM_KEY:-OPENAI_GPT5_6_SOL}
       # --- Control your own browser (Chrome/Chromium) ---
       # Prefer Chrome's chrome://inspect/#remote-debugging flow for an existing profile.
       # On Windows, scripts/windows_chrome_inspect_cdp.ps1 can bridge a
@@ -157,14 +156,12 @@ services:
       retries: 24
       start_period: 180s
   skyvern-ui:
-    image: public.ecr.aws/skyvern/skyvern-ui:latest
-    # For local UI development/testing, replace the image line above with:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.ui
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
     restart: on-failure
     ports:
-      - 8080:8080
+      - "18080:8080"
       - 9090:9090
     volumes:
       - ./artifacts:/data/artifacts
@@ -172,13 +169,18 @@ services:
       - ./har:/data/har
       # Generated credentials allow the UI to pick up the local API key on first startup.
       - ./.skyvern:/app/.skyvern
-    # User secrets and most frontend config live in skyvern-frontend/.env
-    # (loaded via env_file). CDP streaming is inline so local livestreaming is
-    # enabled even if an older frontend .env is present.
+    # Coolify supplies runtime secrets in .env. The UI server mints short-lived
+    # browser credentials through the internal API.
     env_file:
-      - skyvern-frontend/.env
+      - .env
     environment:
       - VITE_BROWSER_STREAMING_MODE=${VITE_BROWSER_STREAMING_MODE:-cdp}
+      - VITE_API_BASE_URL=https://api.skyvern.ricreo.app/api/v1
+      - VITE_WSS_BASE_URL=wss://api.skyvern.ricreo.app/api/v1
+      - SKYVERN_API_BASE_URL=http://skyvern:8000/api/v1
+      - VITE_ENVIRONMENT=local
+      - VITE_CLERK_PUBLISHABLE_KEY=
+      - VITE_ENABLE_CODE_BLOCK=true
     #  - VITE_ENABLE_CODE_BLOCK=true
     # if you want to run skyvern on a remote server,
     # you need to change the host in VITE_WSS_BASE_URL and VITE_API_BASE_URL to match your server ip

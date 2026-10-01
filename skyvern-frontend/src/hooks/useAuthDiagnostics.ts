@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+import { isRemoteAuthDiagnosticsError } from "@/api/localAuthDiagnostics";
+
 import { getClient } from "@/api/AxiosClient";
 
 export type AuthStatusValue =
@@ -9,6 +11,7 @@ export type AuthStatusValue =
   | "invalid"
   | "expired"
   | "not_found"
+  | "remote_unavailable"
   | "ok";
 
 export type AuthDiagnosticsResponse = {
@@ -25,6 +28,9 @@ async function fetchDiagnostics(): Promise<AuthDiagnosticsResponse> {
     );
     return response.data;
   } catch (error) {
+    if (isRemoteAuthDiagnosticsError(error)) {
+      return { status: "remote_unavailable" };
+    }
     if (axios.isAxiosError(error) && error.response?.status === 404) {
       return { status: "ok" };
     }

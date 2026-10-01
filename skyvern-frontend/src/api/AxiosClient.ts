@@ -11,6 +11,8 @@ import {
 import { useAuthIssueStore } from "@/store/AuthIssueStore";
 import axios, { AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
 
+import { isRemoteAuthDiagnosticsError } from "./localAuthDiagnostics";
+
 type ApiVersion = "sans-api-v1" | "v1" | "v2";
 
 const apiV1BaseUrl = apiBaseUrl;
@@ -221,7 +223,7 @@ async function refreshUiSession(bypassCache = false): Promise<boolean> {
   if (!uiSessionEnabled) {
     // A 401/403 is evidence the deployment does want a credential, so a latch set by ambiguous
     // absent-endpoint responses may have been wrong. Probe exactly once per page load, and only
-    // lift the latch if that probe actually mints — re-enabling first would let a genuinely absent
+    // lift the latch if that probe actually mints â€” re-enabling first would let a genuinely absent
     // endpoint be polled again on every later failure.
     if (!bypassCache || uiSessionLatchReprobed) {
       return false;
@@ -289,6 +291,7 @@ clients.forEach((instance) => {
       return response;
     },
     async (error) => {
+      if (isRemoteAuthDiagnosticsError(error)) return Promise.reject(error);
       if (axios.isAxiosError(error)) {
         const statusCode = error.response?.status;
         const detail = getResponseDetail(error.response?.data);

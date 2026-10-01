@@ -14,17 +14,16 @@ function failure(url: string, status: number, detail: string) {
 }
 
 describe("remote diagnostics", () => {
-  it("recognizes only the loopback restriction on the diagnostic endpoint", () => {
-    expect(
-      isRemoteAuthDiagnosticsError(
-        failure(
-          "/internal/auth/status",
-          403,
-          "Endpoint requires localhost access",
+  it.each(["/internal/auth/status", "/internal/llms/status"])(
+    "recognizes the loopback restriction on %s",
+    (endpoint) => {
+      expect(
+        isRemoteAuthDiagnosticsError(
+          failure(endpoint, 403, "Endpoint requires localhost access"),
         ),
-      ),
-    ).toBe(true);
-  });
+      ).toBe(true);
+    },
+  );
   it.each([
     ["/tasks", 403, "Endpoint requires localhost access"],
     ["/internal/auth/status", 401, "Endpoint requires localhost access"],

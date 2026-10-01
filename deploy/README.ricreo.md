@@ -110,12 +110,12 @@ idempotenti. `Completed` non equivale a un risultato verificato.
 
 ### Consultazione e revisione
 
-Le API autenticate sono sotto `/api/v1/workflows/{wpid}/learning`. Si possono usare
+Le API autenticate sono sotto `/v1/workflows/{wpid}/learning`. Si possono usare
 anche da `/docs` se la documentazione API e disponibile; non c'e ancora un pannello
 nell'editor Skyvern. CLI nel repository (API key solo in variabile d'ambiente):
 
 ```sh
-# SKYVERN_API_BASE_URL=https://api.skyvern.ricreo.app/api/v1
+# SKYVERN_API_BASE_URL=https://api.skyvern.ricreo.app/v1
 # SKYVERN_API_KEY=<chiave API esistente, non inserirla nel repository>
 python scripts/workflow_learning.py wpid_... report
 python scripts/workflow_learning.py wpid_... analyze

@@ -33,7 +33,7 @@ def main() -> None:
     key = os.environ.get("SKYVERN_API_KEY")
     if not key:
         parser.error("Set SKYVERN_API_KEY in the environment")
-    base = os.environ.get("SKYVERN_API_BASE_URL", "http://localhost:8000/api/v1").rstrip("/")
+    base = os.environ.get("SKYVERN_API_BASE_URL", "http://localhost:8000/v1").rstrip("/")
     path = f"/workflows/{quote(args.workflow, safe='')}/learning"
     body = None
     method = "GET"

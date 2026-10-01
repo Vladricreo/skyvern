@@ -9,7 +9,7 @@ v1.0.42 e nessuna patch JavaScript applicata al bundle in produzione.
 - Repository: https://github.com/Vladricreo/skyvern, branch main, Compose /docker-compose.yml.
 - API: https://api.skyvern.ricreo.app -> porta interna 8000 (host 18000).
 - UI: https://skyvern.ricreo.app -> porta interna 8080 (host 18080).
-- PostgreSQL: mantenere ./postgres-data nella stessa risorsa Coolify (percorso effettivo verificato).
+- PostgreSQL: /var/lib/skyvern-postgres-production, fuori dalla directory di checkout che Coolify cambia di proprietario.
 - Mantenere la stessa risorsa Coolify: gli altri volumi relativi restano nel suo
   project directory. Per una nuova risorsa migrare prima tutti i volumi, incluso
   credential_vault, browser_sessions e .skyvern.
@@ -26,6 +26,9 @@ v1.0.42 e nessuna patch JavaScript applicata al bundle in produzione.
 
 1. Pubblicare le modifiche del fork e selezionare il fork nella risorsa Coolify.
 2. Conservare variabili, domini, volumi e configurazione del proxy esistenti.
+   Prima del primo deploy arrestare i container e copiare il postgres-data originale
+   in /var/lib/skyvern-postgres-production, preservando i dati e assegnando UID/GID
+   70:70 (postgres:14-alpine). Non avviare con una directory database vuota.
 3. Svuotare Docker Compose Custom Start Command (e gli eventuali vecchi comandi
    custom di build). Usare build/avvio Compose standard di Coolify.
 4. Fare un redeploy con build. Non serve prepare.sh, sed o un'immagine UI locale.

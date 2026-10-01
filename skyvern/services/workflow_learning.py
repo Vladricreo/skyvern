@@ -37,8 +37,8 @@ def prompt_blocks(definition: dict) -> dict[str, dict]:
                 and isinstance(value.get("navigation_goal"), str)
             ):
                 found[value["label"]] = value
-            for child in value.values():
-                visit(child)
+            if value.get("block_type") in {"for_loop", "while_loop"}:
+                visit(value.get("loop_blocks", []))
         elif isinstance(value, list):
             for child in value:
                 visit(child)
@@ -118,7 +118,7 @@ class LearningStore:
             data = dict(evidence)
             if old:
                 previous = json.loads(old[0])
-                if previous["revision"] == data["revision"] and previous["status"] == data["status"]:
+                if all(previous.get(key) == value for key, value in data.items()):
                     for key in ("verified", "case", "benchmark"):
                         if key in previous:
                             data[key] = previous[key]

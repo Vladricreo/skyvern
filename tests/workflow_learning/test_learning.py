@@ -126,6 +126,18 @@ class LearningTests(unittest.TestCase):
             "reject_quality_regression",
         )
 
+    def test_payload_objects_are_not_treated_as_workflow_blocks(self):
+        self.definition["blocks"][0]["navigation_payload"] = {
+            "label": "invoice", "block_type": "task", "navigation_goal": "untrusted payload"
+        }
+        self.assertEqual(learning.prompt_blocks(self.definition)["invoice"], self.definition["blocks"][0])
+
+    def test_changed_run_evidence_invalidates_previous_verification(self):
+        self.record(0)
+        self.store.verify("org", "workflow", "0", True, "case", "v1")
+        self.record(0, duration=30)
+        self.assertNotIn("verified", self.store.rows("org", "workflow")[0])
+
     def test_snapshot_persists_exact_execution_hash_and_partial_flag(self):
         self.store.snapshot("org", "workflow", "run", {"revision": self.revision, "eligible": False})
         reopened = learning.LearningStore(self.directory.name)

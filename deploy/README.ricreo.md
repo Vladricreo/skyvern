@@ -46,3 +46,40 @@ Per GPT-6 Astra impostare LLM_KEY=OPENAI_GPT6_ASTRA e
 GPT6_ASTRA_REASONING_EFFORT=low (oppure medium, high, xhigh, max) nelle variabili
 runtime di Coolify, salvare e fare Redeploy. Il default resta xhigh; il valore
 si applica alle configurazioni Astra dirette e ai router. Non modifica altri modelli.
+
+## Jev sperimentale
+
+Jev interviene solo in `RealSkyvernPageAi.ai_click` per scegliere un link o pulsante
+ordinario quando non servono payload o contesto aggiuntivo. Non sostituisce il
+modello principale, l'estrazione o il ciclo del Browser Task 1.0. Non aspettarsi
+accelerazioni nei workflow che non percorrono questo ramo.
+
+In Coolify, variabili runtime del backend (lette da `.env`):
+
+```env
+ENABLE_JEV_CLICK=true
+TYPESAFE_API_KEY=<inserire solo su Coolify>
+JEV_MODEL=jev-latest
+JEV_ALLOWED_HOSTS=["example.com"]
+JEV_MIN_CONFIDENCE=0.9
+JEV_TIMEOUT_SECONDS=2
+```
+
+Salvare, Reload compose e Redeploy. Il default e disattivato e la lista host vuota.
+Prima di aggiungere un dominio aziendale, verificare quali dati si inviano a
+TypeSafe: istruzione del click ed etichette dei link/pulsanti possono contenere dati
+riservati. Non vengono inviati screenshot, HTML completo, URL o valori dei campi.
+Non abilitare Aruba per il primo test. Serve una chiave dalla console ufficiale:
+https://console.typesafe.ai ; API: https://docs.typesafe.ai/introduction/quickstart .
+
+La selezione incerta, i controlli non supportati, errori e timeout ritornano al
+modello originale. I normali controlli di esecuzione Skyvern restano attivi.
+Un errore di esecuzione dopo la scelta segue il recupero standard di Skyvern,
+non ripete automaticamente il click via GPT. La confidenza non garantisce correttezza.
+
+Test trasporto offline: `python -m unittest discover -s tests/jev -v`.
+Per il confronto live usare un workflow con `ai_click` su una pagina di prova,
+eseguire prima con flag false e poi true, confrontando esiti e tempi totali.
+I log `jev_click_selected`/`jev_click_fallback` contengono solo la latenza;
+un test su example.com senza click non misura questa integrazione.
+Senza API key non e possibile verificare compatibilita live o guadagni di velocita.

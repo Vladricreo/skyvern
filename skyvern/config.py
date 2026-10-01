@@ -515,6 +515,13 @@ class Settings(BaseSettings):
     ENABLE_OPENAI_COMPATIBLE: bool = False
     ENABLE_XAI: bool = False
     # OPENAI
+    # Experimental Jev click selection. Empty host list prevents page data transmission.
+    ENABLE_JEV_CLICK: bool = False
+    TYPESAFE_API_KEY: str | None = None
+    JEV_MODEL: str = "jev-latest"
+    JEV_ALLOWED_HOSTS: list[str] = []
+    JEV_MIN_CONFIDENCE: float = Field(default=0.9, ge=0.0, le=1.0)
+    JEV_TIMEOUT_SECONDS: float = Field(default=2.0, gt=0.0, le=10.0)
     OPENAI_API_KEY: str | None = None
     GPT5_REASONING_EFFORT: str | None = "medium"
     GPT6_ASTRA_REASONING_EFFORT: Literal["low", "medium", "high", "xhigh", "max"] = "xhigh"

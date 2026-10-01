@@ -22,6 +22,7 @@ from skyvern.forge.sdk.api.llm.api_handler_factory import (
     get_org_aware_primary_llm_api_handler,
     get_org_aware_secondary_llm_api_handler,
 )
+from skyvern.forge.sdk.api.llm.jev_click import choose_click
 from skyvern.forge.sdk.api.llm.schema_validator import validate_and_fill_extraction_result
 from skyvern.forge.sdk.cache import extraction_cache
 from skyvern.forge.sdk.core import skyvern_context
@@ -262,12 +263,27 @@ class RealSkyvernPageAi(SkyvernPageAi):
             llm_handler = await _resolve_assist_llm_handler(
                 "single-click-action", app.SINGLE_CLICK_AGENT_LLM_API_HANDLER
             )
-            json_response = await llm_handler(
-                prompt=single_click_prompt,
-                prompt_name="single-click-action",
-                step=step,
-                organization_id=context.organization_id,
-            )
+            json_response = None
+            # Context-dependent clicks retain the full existing GPT prompt.
+            if not data and not context.prompt:
+                json_response = await choose_click(
+                    url=self.page.url,
+                    intention=intention,
+                    elements=self.scraped_page.id_to_element_dict,
+                    api_key=settings.TYPESAFE_API_KEY,
+                    enabled=settings.ENABLE_JEV_CLICK,
+                    allowed_hosts=settings.JEV_ALLOWED_HOSTS,
+                    model=settings.JEV_MODEL,
+                    min_confidence=settings.JEV_MIN_CONFIDENCE,
+                    timeout=settings.JEV_TIMEOUT_SECONDS,
+                )
+            if json_response is None:
+                json_response = await llm_handler(
+                    prompt=single_click_prompt,
+                    prompt_name="single-click-action",
+                    step=step,
+                    organization_id=context.organization_id,
+                )
             actions_json = json_response.get("actions", [])
             if not actions_json:
                 raise SkyvernActionFailed(

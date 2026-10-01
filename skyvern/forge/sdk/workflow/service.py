@@ -2203,6 +2203,10 @@ class WorkflowService:
 
     @staticmethod
     async def _apply_completion_run_tags_best_effort(workflow_run: WorkflowRun) -> None:
+        # Local evidence/proposals only: never edits or executes the live workflow.
+        from skyvern.services.workflow_learning_capture import capture_run
+
+        await capture_run(workflow_run)
         try:
             tags = {"skyvern.status": str(workflow_run.status)}
             if workflow_run.run_with:
@@ -6674,6 +6678,9 @@ class WorkflowService:
             organization_id=organization_id,
             filter_deleted=False,
         )
+        from skyvern.services.workflow_learning_capture import snapshot_run
+
+        await snapshot_run(workflow, workflow_run, partial=bool(block_labels or block_outputs))
         browser_profile_id = workflow_run.browser_profile_id
         browser_session_id = browser_session_id or workflow_run.browser_session_id
         close_browser_on_completion = browser_session_id is None and not workflow_run.browser_address

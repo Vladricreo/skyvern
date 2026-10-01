@@ -516,6 +516,9 @@ class Settings(BaseSettings):
     ENABLE_XAI: bool = False
     # OPENAI
     # Experimental Jev click selection. Empty host list prevents page data transmission.
+    ENABLE_WORKFLOW_LEARNING: bool = False
+    WORKFLOW_LEARNING_DIRECTORY: str = "/data/workflow_learning"
+    WORKFLOW_LEARNING_MIN_RUNS: int = Field(default=3, ge=3, le=100)
     ENABLE_JEV_CLICK: bool = False
     TYPESAFE_API_KEY: str | None = None
     JEV_MODEL: str = "jev-latest"

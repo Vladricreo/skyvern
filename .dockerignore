@@ -33,3 +33,5 @@ Dockerfile
 
 **/postgres-data
 **/log
+
+**/workflow_learning

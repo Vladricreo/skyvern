@@ -38,6 +38,7 @@ services:
       - ./downloads:/data/downloads
       - ./browser_sessions:/data/browser_sessions
       - ./credential_vault:/data/credential_vault
+      - ./workflow_learning:/data/workflow_learning
       # Generated credentials allow the UI to pick up the local API key on first startup.
       - ./.skyvern:/app/.skyvern
       # Uncomment the following two lines if you want to connect to any local changes
@@ -72,6 +73,7 @@ services:
       - LLM_KEY=${LLM_KEY:-OPENAI_GPT5_6_SOL}
       - GPT6_ASTRA_REASONING_EFFORT=${GPT6_ASTRA_REASONING_EFFORT:-xhigh}
       - ENABLE_JEV_CLICK=${ENABLE_JEV_CLICK:-false}
+      - ENABLE_WORKFLOW_LEARNING=${ENABLE_WORKFLOW_LEARNING:-true}
       # --- Control your own browser (Chrome/Chromium) ---
       # Prefer Chrome's chrome://inspect/#remote-debugging flow for an existing profile.
       # On Windows, scripts/windows_chrome_inspect_cdp.ps1 can bridge a

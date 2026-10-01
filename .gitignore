@@ -198,3 +198,5 @@ tmp/
 # Claude
 .claude/*
 !.claude/skills/
+
+/workflow_learning/

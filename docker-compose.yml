@@ -71,6 +71,8 @@ services:
       - ENABLE_CODE_BLOCK=true
       - ENABLE_OPENAI=${ENABLE_OPENAI:-true}
       - LLM_KEY=${LLM_KEY:-OPENAI_GPT5_6_SOL}
+      # Copilot requires a configured handler for its fail-closed message screening.
+      - WORKFLOW_COPILOT_LITE_LLM_KEY=${WORKFLOW_COPILOT_LITE_LLM_KEY:-OPENAI_GPT4_1_MINI}
       - GPT6_ASTRA_REASONING_EFFORT=${GPT6_ASTRA_REASONING_EFFORT:-xhigh}
       - ENABLE_JEV_CLICK=${ENABLE_JEV_CLICK:-false}
       - ENABLE_WORKFLOW_LEARNING=${ENABLE_WORKFLOW_LEARNING:-true}

@@ -154,3 +154,8 @@ The Docker build constrains OpenAI and Agents to the pair in `uv.lock` via
 `scripts/check_copilot_sdk.py` checks creation, aggregation and deserialization
 offline during the image build so this incompatibility cannot pass deployment.
 Update the pair and rerun this check together when upgrading these SDKs.
+
+Copilot also requires `WORKFLOW_COPILOT_LITE_LLM_KEY` for message screening.
+Compose defaults it to `OPENAI_GPT4_1_MINI` using the existing OpenAI configuration.
+This keeps screening enabled; an absent handler otherwise blocks every message.
+The main workflow/Copilot model continues to use its existing settings.

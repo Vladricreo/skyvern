@@ -70,6 +70,7 @@ services:
       - ENABLE_CODE_BLOCK=true
       - ENABLE_OPENAI=${ENABLE_OPENAI:-true}
       - LLM_KEY=${LLM_KEY:-OPENAI_GPT5_6_SOL}
+      - GPT6_ASTRA_REASONING_EFFORT=${GPT6_ASTRA_REASONING_EFFORT:-xhigh}
       # --- Control your own browser (Chrome/Chromium) ---
       # Prefer Chrome's chrome://inspect/#remote-debugging flow for an existing profile.
       # On Windows, scripts/windows_chrome_inspect_cdp.ps1 can bridge a

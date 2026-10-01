@@ -41,3 +41,8 @@ L'accesso alla diagnostica interna resta limitato a localhost. Solo il suo esatt
 Per tornare indietro conservare la precedente configurazione Coolify e un backup
 del database prima del primo deploy: un backend aggiornato puo eseguire migrazioni.
 Il repository non esegue automaticamente push o deploy.
+
+Per GPT-6 Astra impostare LLM_KEY=OPENAI_GPT6_ASTRA e
+GPT6_ASTRA_REASONING_EFFORT=low (oppure medium, high, xhigh, max) nelle variabili
+runtime di Coolify, salvare e fare Redeploy. Il default resta xhigh; il valore
+si applica alle configurazioni Astra dirette e ai router. Non modifica altri modelli.

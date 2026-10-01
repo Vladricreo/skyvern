@@ -22,7 +22,7 @@ GPT6_MODEL_NAMES: dict[str, str] = {
     "luna": "gpt-6-luna",
 }
 GPT6_REASONING_EFFORT: dict[str, str] = {
-    "astra": "xhigh",
+    "astra": settings.GPT6_ASTRA_REASONING_EFFORT,
     "sol": "medium",
     "1_sol": "medium",
     "luna": settings.GPT6_LUNA_REASONING_EFFORT,

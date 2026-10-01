@@ -6,7 +6,7 @@ services:
     # ports:
     #   - 5432:5432
     volumes:
-      - /var/lib/skyvern-postgres:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_USER=skyvern

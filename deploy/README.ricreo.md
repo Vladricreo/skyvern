@@ -9,7 +9,7 @@ v1.0.42 e nessuna patch JavaScript applicata al bundle in produzione.
 - Repository: https://github.com/Vladricreo/skyvern, branch main, Compose /docker-compose.yml.
 - API: https://api.skyvern.ricreo.app -> porta interna 8000 (host 18000).
 - UI: https://skyvern.ricreo.app -> porta interna 8080 (host 18080).
-- PostgreSQL: mantenere /var/lib/skyvern-postgres, gia usato in produzione.
+- PostgreSQL: mantenere ./postgres-data nella stessa risorsa Coolify (percorso effettivo verificato).
 - Mantenere la stessa risorsa Coolify: gli altri volumi relativi restano nel suo
   project directory. Per una nuova risorsa migrare prima tutti i volumi, incluso
   credential_vault, browser_sessions e .skyvern.

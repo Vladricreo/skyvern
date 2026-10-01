@@ -145,3 +145,12 @@ Il sistema esistente di adaptive caching/self-healing resta separato e invariato
 Questa funzione non attiva automaticamente la conversione in Playwright e non
 promette guadagni prima di un confronto reale. Test offline:
 `python -m unittest discover -s tests/workflow_learning -v`.
+
+### Copilot SDK compatibility
+
+The Docker build constrains OpenAI and Agents to the pair in `uv.lock` via
+`deploy/requirements-ricreo.txt`. Resolving OpenAI 3.x with Agents 0.14.x breaks
+`Usage()` before Copilot starts (`InputTokensDetails.cache_write_tokens` missing).
+`scripts/check_copilot_sdk.py` checks creation, aggregation and deserialization
+offline during the image build so this incompatibility cannot pass deployment.
+Update the pair and rerun this check together when upgrading these SDKs.

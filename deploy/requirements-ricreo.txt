@@ -1,0 +1,4 @@
+# Keep the Copilot SDK pair aligned with uv.lock. Agents 0.14.x constructs
+# InputTokensDetails without the cache_write_tokens required by OpenAI 3.x.
+openai==2.33.0
+openai-agents==0.14.8

@@ -29,10 +29,13 @@ async def choose_click(
 ) -> dict[str, Any] | None:
     """Return a validated ordinary click, or None to retain the existing LLM path.
 
-    Hosts must be explicitly allowed. Only labels of ordinary links/buttons and
+    An omitted or empty host list allows every host; a nonempty list restricts hosts.
+    Only labels of ordinary links/buttons and
     the instruction are sent; URLs, input values, and full page HTML are omitted.
     """
-    if not enabled or not api_key or urlsplit(url).hostname not in (allowed_hosts or []):
+    if not enabled or not api_key:
+        return None
+    if allowed_hosts and urlsplit(url).hostname not in allowed_hosts:
         return None
     candidates: dict[str, str] = {}
     for element_id, element in elements.items():

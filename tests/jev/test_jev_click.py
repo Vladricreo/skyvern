@@ -65,10 +65,32 @@ class JevClickTests(unittest.IsolatedAsyncioTestCase):
         for change in (
             {"enabled": False},
             {"api_key": None},
-            {"allowed_hosts": []},
             {"url": "https://example.com.evil.test"},
         ):
             self.assertIsNone(await self.invoke(forbidden, **change))
+
+    async def test_optional_host_list_allows_any_host(self):
+        for hosts in (None, []):
+            with self.subTest(hosts=hosts):
+                result = await self.invoke(
+                    lambda request: self.response(),
+                    allowed_hosts=hosts,
+                    url="https://another.example/path",
+                )
+                self.assertEqual(result["actions"][0]["id"], "help")
+
+    async def test_omitted_host_argument_allows_any_host(self):
+        args = self.args()
+        args.pop("allowed_hosts")
+        args["url"] = "https://another.example/path"
+        with patch.object(
+            jev.httpx, "AsyncClient",
+            side_effect=lambda **kw: RealClient(
+                transport=httpx.MockTransport(lambda request: self.response()), **kw
+            ),
+        ):
+            result = await jev.choose_click(**args)
+        self.assertEqual(result["actions"][0]["id"], "help")
 
     async def test_uncertain_invalid_and_abstain_fall_back(self):
         for value in (0.2, True, "0.99", float("nan"), 1.1):

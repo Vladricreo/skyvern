@@ -60,16 +60,19 @@ In Coolify, variabili runtime del backend (lette da `.env`):
 ENABLE_JEV_CLICK=true
 TYPESAFE_API_KEY=<inserire solo su Coolify>
 JEV_MODEL=jev-latest
-JEV_ALLOWED_HOSTS=["example.com"]
+# Opzionale: omettere per tutti i domini, oppure limitare con una lista JSON.
+# JEV_ALLOWED_HOSTS=["example.com"]
 JEV_MIN_CONFIDENCE=0.9
 JEV_TIMEOUT_SECONDS=2
 ```
 
-Salvare, Reload compose e Redeploy. Il default e disattivato e la lista host vuota.
+Salvare, Reload compose e Redeploy. Jev resta disattivato per default.
+JEV_ALLOWED_HOSTS assente oppure [] consente tutti i domini quando Jev e attivo.
+Una lista non vuota limita Jev agli host indicati con corrispondenza esatta.
 Prima di aggiungere un dominio aziendale, verificare quali dati si inviano a
 TypeSafe: istruzione del click ed etichette dei link/pulsanti possono contenere dati
 riservati. Non vengono inviati screenshot, HTML completo, URL o valori dei campi.
-Non abilitare Aruba per il primo test. Serve una chiave dalla console ufficiale:
+Serve una chiave dalla console ufficiale:
 https://console.typesafe.ai ; API: https://docs.typesafe.ai/introduction/quickstart .
 
 La selezione incerta, i controlli non supportati, errori e timeout ritornano al

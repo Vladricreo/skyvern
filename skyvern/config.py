@@ -522,6 +522,7 @@ class Settings(BaseSettings):
     ENABLE_JEV_CLICK: bool = False
     TYPESAFE_API_KEY: str | None = None
     JEV_MODEL: str = "jev-latest"
+    # Optional: an omitted/empty list allows all hosts; a populated list restricts Jev.
     JEV_ALLOWED_HOSTS: list[str] = []
     JEV_MIN_CONFIDENCE: float = Field(default=0.9, ge=0.0, le=1.0)
     JEV_TIMEOUT_SECONDS: float = Field(default=2.0, gt=0.0, le=10.0)

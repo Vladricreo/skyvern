@@ -159,3 +159,25 @@ Copilot also requires `WORKFLOW_COPILOT_LITE_LLM_KEY` for message screening.
 Compose defaults it to `OPENAI_GPT4_1_MINI` using the existing OpenAI configuration.
 This keeps screening enabled; an absent handler otherwise blocks every message.
 The main workflow/Copilot model continues to use its existing settings.
+
+## Profilo risparmio Ricreo
+
+Il Compose usa ora OPENAI_GPT4_1_MINI come modello principale predefinito e
+MAX_RETRIES_PER_STEP=1. Le variabili gia salvate in Coolify hanno precedenza:
+impostare LLM_KEY=OPENAI_GPT4_1_MINI e MAX_RETRIES_PER_STEP=1 anche li e ridistribuire.
+Gli handler secondari, di estrazione e Copilot non configurati ereditano il modello
+principale. Verificare separatamente eventuali override di modello e tentativi nei
+blocchi, nei task e nell'organizzazione: questi possono prevalere sui default.
+Astra resta disponibile solo tramite una scelta esplicita del modello; non e un
+fallback di questo profilo. Il modello economico richiede verifica degli esiti sul
+workflow reale: non e una garanzia di uguale qualita o di minore costo per successo.
+
+Per eliminare le chiamate del modello nei passaggi ripetitivi servono script
+Playwright verificati. La modalita Code e il controllo AI Fallback esistono gia,
+ma la cache adattiva (code_version >= 2) puo forzare il recupero AI: non considerare
+il solo interruttore una garanzia di esecuzione senza LLM. Non convertire un workflow
+in Code prima che esista uno script funzionante. Gli screenshot di diagnostica sono
+separati dalle immagini inviate al modello e non vengono disabilitati.
+
+Jev resta opt-in e richiede una chiave API: cambiare modello principale non abilita
+Jev e non sostituisce automaticamente i Browser Task con Playwright deterministico.

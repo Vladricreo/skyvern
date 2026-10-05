@@ -70,7 +70,9 @@ services:
       - LOCAL_CREDENTIAL_VAULT_PATH=/data/credential_vault
       - ENABLE_CODE_BLOCK=true
       - ENABLE_OPENAI=${ENABLE_OPENAI:-true}
-      - LLM_KEY=${LLM_KEY:-OPENAI_GPT5_6_SOL}
+      - LLM_KEY=${LLM_KEY:-OPENAI_GPT4_1_MINI}
+      # Bound repeated paid attempts; explicit task overrides must be reviewed separately.
+      - MAX_RETRIES_PER_STEP=${MAX_RETRIES_PER_STEP:-1}
       # Copilot requires a configured handler for its fail-closed message screening.
       - WORKFLOW_COPILOT_LITE_LLM_KEY=${WORKFLOW_COPILOT_LITE_LLM_KEY:-OPENAI_GPT4_1_MINI}
       - GPT6_ASTRA_REASONING_EFFORT=${GPT6_ASTRA_REASONING_EFFORT:-xhigh}
